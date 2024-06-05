@@ -1,45 +1,40 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import Header from '../components/Header/Header';
+import React, { useContext } from 'react'
+import { DatasContextProvider } from '../context/DatasContext/DatasContextProvider';
 import { ActionsContextProvider } from '../context/ActionsContext/ActionsContextProvider';
 
 export default function Layout() {
-    const { active, ActiveHandler } = useContext(ActionsContextProvider);
-    
+    const { pomoFocusTime, shortBreakTime, longBreakTime } = useContext(DatasContextProvider);
+    const { active } = useContext(ActionsContextProvider);
+
+    let minute = Math.floor(pomoFocusTime / 60);
+    let second = Math.floor(pomoFocusTime % 60);
+
+    switch (active) {
+        case 1:
+            minute = Math.floor(pomoFocusTime / 60);
+            second = Math.floor(pomoFocusTime % 60);
+            break;
+        case 2:
+            minute = Math.floor(shortBreakTime / 60);
+            second = Math.floor(shortBreakTime % 60);
+            break;
+        case 3:
+            minute = Math.floor(longBreakTime / 60);
+            second = Math.floor(longBreakTime % 60);
+            break;
+    }
+
     return (
-        <div>
-            <Header />
-            <div className="max-w-lg h-96 mx-auto justify-center items-center my-12 rounded-lg"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-            >
-                <div className="max-w-sm text-center mx-auto py-10">
-                    <ul className='flex justify-center cursor-pointer items-center'>
-                        <li
-                            onClick={() => ActiveHandler(1)}
-                            className={`${active === 1 ? 'bg-[#ffffff4a] py-1 px-4 rounded-md' : 'py-1 px-4'} transition-all ease-in-out`}
-                        >
-                            Pomodoro
-                        </li>
-                        <li
-                            onClick={() => ActiveHandler(2)}
-                            className={`${active === 2 ? 'bg-[#ffffff4a] py-1 px-4 rounded-md' : 'py-1 px-4'} transition-all ease-in-out`}
-                        >
-                            Short Break
-                        </li>
-                        <li
-                            onClick={() => ActiveHandler(3)}
-                            className={`${active === 3 ? 'bg-[#ffffff4a] py-1 px-4 rounded-md' : 'py-1 px-4'} transition-all ease-in-out`}
-                        >
-                            Long Break
-                        </li>
-                    </ul>
-                </div>
-                <div className="">
-                    <div className="flex">
-                    </div>
-                </div>
-            </div>
-            <Outlet />
-        </div>
+        <>
+            {
+                (active === 1) && (
+                    <h1 className='text-9xl font-bold'>{`${`${minute}`.padStart(2, 0)} : ${`${second}`.padStart(2, 0)}`}</h1>
+                ) || (active === 2) && (
+                    <h1 className='text-9xl font-bold'>{`${`${minute}`.padStart(2, 0)} : ${`${second}`.padStart(2, 0)}`}</h1>
+                ) || (active === 3) && (
+                    <h1 className='text-9xl font-bold'>{`${`${minute}`.padStart(2, 0)} : ${`${second}`.padStart(2, 0)}`}</h1>
+                )
+            }
+        </>
     )
 }

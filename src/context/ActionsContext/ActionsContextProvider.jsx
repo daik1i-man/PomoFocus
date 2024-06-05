@@ -4,6 +4,7 @@ export const ActionsContextProvider = createContext();
 
 export default function ActionsContexComponent({ children }) {
     const [openModal, setOpenModal] = useState(false);
+    const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
     const [active, setActive] = useState(1);
 
     const ActiveHandler = (value) => {
@@ -12,7 +13,7 @@ export default function ActionsContexComponent({ children }) {
 
     return (
         <ActionsContextProvider.Provider value={
-            { openModal, setOpenModal, active, setActive, ActiveHandler }
+            { openModal, setOpenModal, active, setActive, ActiveHandler, openAddTaskModal, setOpenAddTaskModal }
         }>
             {children}
         </ActionsContextProvider.Provider>

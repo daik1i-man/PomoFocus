@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { Disclosure, Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 import { UserAuthContext } from '../../context/UserAuthContext/UserAuthContext'
+import { ActionsContextProvider } from '../../context/ActionsContext/ActionsContextProvider'
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -9,11 +10,12 @@ function classNames(...classes) {
 
 export default function Header() {
     const { user } = useContext(UserAuthContext);
+    const { setOpenModal } = useContext(ActionsContextProvider);
     return (
         <Disclosure as="nav" className="">
             {({ open }) => (
                 <>
-                    <div className="mx-auto max-w-3xl px-2 sm:px-6 lg:px-8 border-b">
+                    <div className="mx-auto max-w-3xl px-2 sm:px-6 lg:px-8">
                         <div className="relative flex h-16 items-center justify-between">
                             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                                 <Link to='/'>
@@ -27,7 +29,9 @@ export default function Header() {
                                     </div>
                                 </Link>
                             </div>
-                            <button className='flex mx-2 items-center gap-x-2 text-gray-50 py-2 px-4 rounded-md'
+                            <button
+                                onClick={() => setOpenModal(true)}
+                                className='flex mx-2 items-center gap-x-2 text-gray-50 py-2 px-4 rounded-md'
                                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
