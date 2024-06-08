@@ -1,6 +1,6 @@
-import { useContext } from 'react'
-import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
-import { ActionsContextProvider } from '../../context/ActionsContext/ActionsContextProvider'
+import { useContext, useState, useEffect } from 'react';
+import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
+import { ActionsContextProvider } from '../../context/ActionsContext/ActionsContextProvider';
 import { DatasContextProvider } from '../../context/DatasContext/DatasContextProvider';
 
 export default function SettingsModal() {
@@ -16,13 +16,34 @@ export default function SettingsModal() {
         active,
     } = useContext(DatasContextProvider);
 
-    let pomofocusMinutes = Math.floor(pomoFocusTime / 60);
-    let shortBreakMinutes = Math.floor(shortBreakTime / 60);
-    let longBreakMinutes = Math.floor(longBreakTime / 60);
+    const [initialPomoFocusTime, setInitialPomoFocusTime] = useState(Math.floor(pomoFocusTime / 60));
+    const [initialShortBreakTime, setInitialShortBreakTime] = useState(Math.floor(shortBreakTime / 60));
+    const [initialLongBreakTime, setInitialLongBreakTime] = useState(Math.floor(longBreakTime / 60));
+
+    useEffect(() => {
+        setInitialPomoFocusTime(Math.floor(pomoFocusTime / 60));
+        setInitialShortBreakTime(Math.floor(shortBreakTime / 60));
+        setInitialLongBreakTime(Math.floor(longBreakTime / 60));
+    }, [pomoFocusTime, shortBreakTime, longBreakTime]);
+
+    const handlePomoFocusTimeChange = (e) => {
+        setInitialPomoFocusTime(e.target.value);
+        setPomoFocusTime(e.target.value * 60);
+    };
+
+    const handleShortBreakTimeChange = (e) => {
+        setInitialShortBreakTime(e.target.value);
+        setShortBreakTime(e.target.value * 60);
+    };
+
+    const handleLongBreakTimeChange = (e) => {
+        setInitialLongBreakTime(e.target.value);
+        setLongBreakTime(e.target.value * 60);
+    };
 
     return (
         <Transition show={openModal}>
-            <Dialog className="relative z-10" onClose={setOpenModal}>
+            <Dialog className="relative z-10" onClose={() => setOpenModal(false)}>
                 <TransitionChild
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
@@ -45,7 +66,7 @@ export default function SettingsModal() {
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
                             <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 text-gray-900">
+                                <div className="bg-white px-4 pt-5 text-gray-900">
                                     <div className="flex justify-between items-center">
                                         <div className="border-b-2 py-2 w-8 border-solid border-gray-900">
                                             <h1 className='text-xl'>Settings</h1>
@@ -57,7 +78,6 @@ export default function SettingsModal() {
                                     <hr className='mt-4' />
 
                                     {/* Timer settings */}
-
                                     <div className="my-8">
                                         <div className="flex space-x-2 my-4">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -68,42 +88,46 @@ export default function SettingsModal() {
                                         <div className="my-4">
                                             <h1 className='font-medium text-sm'>Time (minutes)</h1>
                                         </div>
-                                        <div className="flex gap-x-4">
-                                            <div className="flex flex-col space-y-2">
-                                                <label htmlFor="pomoFocus" className='font-medium text-gray-400'>Pomodoro</label>
-                                                <input
-                                                    type="number"
-                                                    name="pomoFocus"
-                                                    id="pomoFocus"
-                                                    value={pomofocusMinutes}
-                                                    className="w-full rounded-md py-1.5 px-4 focus:outline-none border bg-gray-50 text-gray-900 ring-gray-300 placeholder:text-gray-400"
-                                                />
+                                        <form>
+                                            <div className="flex gap-x-4">
+                                                <div className="flex flex-col space-y-2">
+                                                    <label htmlFor="pomoFocus" className='font-medium text-gray-400'>Pomodoro</label>
+                                                    <input
+                                                        type="number"
+                                                        name="pomoFocus"
+                                                        id="pomoFocus"
+                                                        value={initialPomoFocusTime}
+                                                        onChange={handlePomoFocusTimeChange}
+                                                        className="w-full rounded-md py-1.5 px-4 focus:outline-none border bg-gray-50 text-gray-900 ring-gray-300 placeholder:text-gray-400"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col space-y-2">
+                                                    <label htmlFor="shortBreak" className='font-medium text-gray-400'>Short Break</label>
+                                                    <input
+                                                        type="number"
+                                                        name="shortBreak"
+                                                        id="shortBreak"
+                                                        value={initialShortBreakTime}
+                                                        onChange={handleShortBreakTimeChange}
+                                                        className="w-full rounded-md py-1.5 px-4 focus:outline-none border bg-gray-50 text-gray-900 ring-gray-300 placeholder:text-gray-400"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col space-y-2">
+                                                    <label htmlFor="longBreak" className='font-medium text-gray-400'>Long Break</label>
+                                                    <input
+                                                        type="number"
+                                                        name="longBreak"
+                                                        id="longBreak"
+                                                        value={initialLongBreakTime}
+                                                        onChange={handleLongBreakTimeChange}
+                                                        className="w-full rounded-md py-1.5 px-4 focus:outline-none border bg-gray-50 text-gray-900 ring-gray-300 placeholder:text-gray-400"
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col space-y-2">
-                                                <label htmlFor="shortBreak" className='font-medium text-gray-400'>Short Break</label>
-                                                <input
-                                                    type="number"
-                                                    name="shortBreak"
-                                                    id="shortBreak"
-                                                    value={shortBreakMinutes}
-                                                    className="w-full rounded-md py-1.5 px-4 focus:outline-none border bg-gray-50 text-gray-900 ring-gray-300 placeholder:text-gray-400"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col space-y-2">
-                                                <label htmlFor="longBreak" className='font-medium text-gray-400'>Long Break</label>
-                                                <input
-                                                    type="number"
-                                                    name="longBreak"
-                                                    id="longBreak"
-                                                    value={longBreakMinutes}
-                                                    className="w-full rounded-md py-1.5 px-4 focus:outline-none border bg-gray-50 text-gray-900 ring-gray-300 placeholder:text-gray-400"
-                                                />
-                                            </div>
-                                        </div>
+                                        </form>
                                         <hr className='my-8' />
 
                                         {/* Themes settings */}
-
                                         <div className="">
                                             <div className="flex space-x-2 my-4 justify-between">
                                                 <div className="flex space-x-2">
@@ -114,33 +138,40 @@ export default function SettingsModal() {
                                                 </div>
                                                 <div className="flex space-x-4 justify-center">
                                                     <div onClick={() => ActiveHandler(1)} className="w-8 h-8 bg-[#BA4949] rounded-md cursor-pointer p-1 text-gray-50">
-                                                        {(active === undefined) && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                        {active === 1 && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                                             <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
                                                         </svg>}
                                                     </div>
                                                     <div onClick={() => ActiveHandler(2)} className="w-8 h-8 bg-[#38858A] rounded-md cursor-pointer p-1 text-gray-50">
-                                                        {(active === 2) && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                        {active === 2 && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                                             <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
                                                         </svg>}
                                                     </div>
                                                     <div onClick={() => ActiveHandler(3)} className="w-8 h-8 bg-[#397097] rounded-md cursor-pointer p-1 text-gray-50">
-                                                        {(active === 3) && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                        {active === 3 && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                                             <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
                                                         </svg>}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="">
-                                                {/* <div className="flex space-x-4 justify-center">
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                    <div className="w-12 h-12 bg-slate-600 rounded-md cursor-pointer" />
-                                                </div> */}
-                                            </div>
+                                        </div>
+
+                                        {/* buttons */}
+                                        <div className="flex gap-x-4 my-8 -mb-4 items-center justify-end">
+                                            <button
+                                                onClick={() => setOpenModal(false)}
+                                                type="button"
+                                                className="inline-flex w-full justify-center border rounded-md px-8 py-2 text-sm font-semibold text-gray-900 shadow-sm sm:w-auto"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="inline-flex w-full justify-center rounded-md bg-gray-900 px-8 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:w-auto"
+                                                onClick={() => setOpenModal(false)}
+                                            >
+                                                Save
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -150,5 +181,5 @@ export default function SettingsModal() {
                 </div>
             </Dialog>
         </Transition>
-    )
+    );
 }
