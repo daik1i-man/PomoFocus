@@ -7,6 +7,7 @@ import SettingsModal from '../../components/SettigsModal/SettingsModal';
 import AddTaskModal from '../../components/AddTaskModal/AddTaskModal';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import TaskComponent from '../../components/TaskComponent/TaskComponent';
+import axios from 'axios';
 
 export default function PomofucPage() {
     const {
@@ -19,13 +20,27 @@ export default function PomofucPage() {
         fakeDatas
     } = useContext(DatasContextProvider);
 
+    const [tempDatas, setTempDatas] = useState([]);
+
+    useEffect(() => {
+        const fetchTaskDatas = async () => {
+            const datas = await axios.get('http://localhost:5000/user/task/get')
+                .then((res) => {
+                    let temp = [];
+                    temp.push(res.data.tasks)
+                    setTempDatas(temp);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        }
+
+        fetchTaskDatas;
+    }, [])
+
     const { active, ActiveHandler, setOpenAddTaskModal } = useContext(ActionsContextProvider);
     const [timerState, setTimerState] = useState("Start");
     const [timerId, setTimerId] = useState(null);
-
-    let initialPomoFocusTime = pomoFocusTime;
-    let initialShortBreakTime = shortBreakTime;
-    let initialLongBreakTime = longBreakTime;
 
     const TimeStartHandler = () => {
         setTimerState("Pause");
@@ -252,14 +267,18 @@ export default function PomofucPage() {
 
                 {/* Mapping datas */}
 
-                {(fakeDatas.length > 0) && fakeDatas.map((data, i) => (
-                    <div className="my-2" key={i + 1}>
+                {tempDatas.map((data, i) => (
+                    data.title &&
+                    (<div
+                        className="my-2"
+                        key={i + 1}
+                    >
                         <TaskComponent
                             id={i + 1}
                             title={data.title}
                             description={data.description}
                         />
-                    </div>
+                    </div>)
                 ))}
 
                 {/* add task button */}

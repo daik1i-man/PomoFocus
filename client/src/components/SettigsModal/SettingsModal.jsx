@@ -5,41 +5,43 @@ import { DatasContextProvider } from '../../context/DatasContext/DatasContextPro
 
 export default function SettingsModal() {
     const { openModal, setOpenModal } = useContext(ActionsContextProvider);
-    const {
-        pomoFocusTime,
-        setPomoFocusTime,
-        shortBreakTime,
-        setShortBreakTime,
-        longBreakTime,
-        setLongBreakTime,
-        ActiveHandler,
-        active,
-    } = useContext(DatasContextProvider);
+    const { ActiveHandler, active, datas, setDatas } = useContext(DatasContextProvider);
 
-    const [initialPomoFocusTime, setInitialPomoFocusTime] = useState(Math.floor(pomoFocusTime / 60));
-    const [initialShortBreakTime, setInitialShortBreakTime] = useState(Math.floor(shortBreakTime / 60));
-    const [initialLongBreakTime, setInitialLongBreakTime] = useState(Math.floor(longBreakTime / 60));
+    const [initialPomoFocusTime, setInitialPomoFocusTime] = useState(0);
+    const [initialShortBreakTime, setInitialShortBreakTime] = useState(0);
+    const [initialLongBreakTime, setInitialLongBreakTime] = useState(0);
 
     useEffect(() => {
-        setInitialPomoFocusTime(Math.floor(pomoFocusTime / 60));
-        setInitialShortBreakTime(Math.floor(shortBreakTime / 60));
-        setInitialLongBreakTime(Math.floor(longBreakTime / 60));
-    }, [pomoFocusTime, shortBreakTime, longBreakTime]);
+        if (datas.pomofus !== undefined) {
+            setInitialPomoFocusTime(Math.floor(datas.pomofocus / 60));
+            setInitialShortBreakTime(Math.floor(datas.short_break / 60));
+            setInitialLongBreakTime(Math.floor(datas.long_break / 60));
+        }
+    }, [datas])
 
     const handlePomoFocusTimeChange = (e) => {
         setInitialPomoFocusTime(e.target.value);
-        setPomoFocusTime(e.target.value * 60);
     };
 
     const handleShortBreakTimeChange = (e) => {
         setInitialShortBreakTime(e.target.value);
-        setShortBreakTime(e.target.value * 60);
     };
 
     const handleLongBreakTimeChange = (e) => {
         setInitialLongBreakTime(e.target.value);
-        setLongBreakTime(e.target.value * 60);
     };
+
+    const UpdateTaskHandler = (e) => {
+        e.preventDefault();
+        const newDatas = {
+            pomofocus: initialPomoFocusTime * 60,
+            short_break: initialShortBreakTime * 60,
+            long_break: initialLongBreakTime * 60
+        }
+
+        setDatas({ ...datas, ...newDatas });
+        setOpenModal(false);
+    }
 
     return (
         <Transition show={openModal}>
@@ -88,7 +90,7 @@ export default function SettingsModal() {
                                         <div className="my-4">
                                             <h1 className='font-medium text-sm'>Time (minutes)</h1>
                                         </div>
-                                        <form>
+                                        <form onSubmit={UpdateTaskHandler}>
                                             <div className="flex gap-x-4">
                                                 <div className="flex flex-col space-y-2">
                                                     <label htmlFor="pomoFocus" className='font-medium text-gray-400'>Pomodoro</label>
@@ -168,7 +170,7 @@ export default function SettingsModal() {
                                             <button
                                                 type="button"
                                                 className="inline-flex w-full justify-center rounded-md bg-gray-900 px-8 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:w-auto"
-                                                onClick={() => setOpenModal(false)}
+                                                onClick={UpdateTaskHandler}
                                             >
                                                 Save
                                             </button>

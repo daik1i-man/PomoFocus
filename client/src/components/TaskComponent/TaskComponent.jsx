@@ -2,9 +2,11 @@ import React, { useContext } from 'react'
 import { ActionsContextProvider } from '../../context/ActionsContext/ActionsContextProvider'
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom';
+import UpdateTaskModal from '../updateTaskModal/updateTaskmodal';
+import DeleteTaskModal from '../deleteTaskModal/deleteTaskModal';
 
 export default function TaskComponent({ id, title, description }) {
-    const { openUpdateTaskModal, setOpenUpdateTaskModal } = useContext(ActionsContextProvider);
+    const { setOpenUpdateTaskModal, setOpenDeleteTaskModal } = useContext(ActionsContextProvider);
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
@@ -15,9 +17,8 @@ export default function TaskComponent({ id, title, description }) {
             <div className="max-w-xl p-6 space-y-4 bg-white border transform transition-all border-gray-200 rounded-lg shadow">
                 <div className="flex justify-between items-center">
                     <h5 className="text-lg font-bold tracking-tight text-gray-900">{title && title}</h5>
-                    <button className=''>
-
-                    </button>
+                    <UpdateTaskModal id={id} />
+                    <DeleteTaskModal id={id} />
                     <Menu as="div" className="relative ml-3">
                         <div>
                             <MenuButton className="relative flex rounded-md border-2 border-solid text-gray-800 text-sm ">
@@ -38,6 +39,7 @@ export default function TaskComponent({ id, title, description }) {
                                 <MenuItem>
                                     {({ focus }) => (
                                         <Link
+                                            onClick={() => setOpenUpdateTaskModal(true)}
                                             to=''
                                             className={classNames(focus ? 'bg-gray-100' : '', 'flex gap-x-3 items-center px-4 py-2 text-sm text-gray-700')}
                                         >
@@ -51,6 +53,7 @@ export default function TaskComponent({ id, title, description }) {
                                 <MenuItem>
                                     {({ focus }) => (
                                         <Link
+                                            onClick={() => setOpenDeleteTaskModal(true)}
                                             to=''
                                             className={classNames(focus ? 'bg-gray-100' : '', 'flex gap-x-3 items-center px-4 py-2 text-sm text-gray-700')}
                                         >
