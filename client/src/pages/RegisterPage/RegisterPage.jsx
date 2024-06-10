@@ -1,12 +1,13 @@
 import { Button, Input } from "@headlessui/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from 'axios'
+import axios from "axios";
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState('');
   const [formError, setFormError] = useState({
     email: false,
+    password: false,
+    username: false,
   });
 
   function onChange(e) {
@@ -15,35 +16,51 @@ export default function RegisterPage() {
     // regex tests
     const emailregex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    const passregex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
+    const usernameregex = /^[a-zA-Z0-9]{3,16}$/;
     if (id === "email") {
       setFormError({
         ...formError,
         email: !emailregex.test(value),
       });
     }
-
-    setEmail(e.target.value);
-  }
-
-
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    if (!formError.email) {
-      const values = {
-        email: e.target[0].value,
-      };
-
-      await axios.post('http://localhost:5000/register/')
-
+    if (id === "password") {
+      setFormError({
+        ...formError,
+        password: !passregex.test(value),
+      });
+    }
+    if (id === "username") {
+      setFormError({
+        ...formError,
+        username: !usernameregex.test(value),
+      });
     }
   }
 
+  async function onSubmit(e) {
+    e.preventDefault();
+    if (!(formError.email && formError.password && formError.username)) {
+      let values = {};
+      for (const ev of e.target) {
+        if (ev.id != "" && ev.value != "") {
+          values = {
+            ...values,
+            [ev.id]: ev.value,
+          };
+        }
+      }
+
+      await axios.post("http://localhost:5000/register/", {
+        ...JSON.stringify(values),
+      });
+    }
+  }
 
   return (
     <div className="SignupPage flex items-center justify-center h-screen w-full">
       <div className="wrapped w-[345px]">
-        <Link to='/'>
+        <Link to="/">
           <img
             src="https://pomofocus.io/images/brandlogo-white.png"
             alt="Pomofocus logo"
@@ -71,6 +88,25 @@ export default function RegisterPage() {
             </div>
             <div className="formItem">
               <label
+                htmlFor="username"
+                className="mt-4 mb-2 uppercase text-[#c4c4c4] text-xs font-semibold"
+              >
+                Username
+              </label>
+              <Input
+                id="username"
+                type="text"
+                required
+                placeholder="@iamaspiderman"
+                className={`px-3 py-2 outline-none rounded-lg bg-[#efefef] text-black w-full`}
+                onChange={onChange}
+              />
+              {formError.username && (
+                <i className="text-red-500">Please enter a username</i>
+              )}
+            </div>
+            <div className="formItem">
+              <label
                 htmlFor="email"
                 className="mt-4 mb-2 uppercase text-[#c4c4c4] text-xs font-semibold"
               >
@@ -82,11 +118,28 @@ export default function RegisterPage() {
                 required
                 placeholder="example@email.com"
                 className={`px-3 py-2 outline-none rounded-lg bg-[#efefef] text-black w-full`}
-                value={email}
                 onChange={onChange}
               />
               {formError.email && (
                 <i className="text-red-500">Please enter a valid email</i>
+              )}
+            </div>
+            <div className="formItem">
+              <label
+                htmlFor="password"
+                className="mt-4 mb-2 uppercase text-[#c4c4c4] text-xs font-semibold"
+              >
+                password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                required
+                className={`px-3 py-2 outline-none rounded-lg bg-[#efefef] text-black w-full`}
+                onChange={onChange}
+              />
+              {formError.password && (
+                <i className="text-red-500">Please enter a stronger password</i>
               )}
             </div>
             <Button
