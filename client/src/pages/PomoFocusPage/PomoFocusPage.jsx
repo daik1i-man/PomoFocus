@@ -10,12 +10,12 @@ import TaskComponent from '../../components/TaskComponent/TaskComponent';
 import axios from 'axios';
 
 export default function PomofucPage() {
-    const { pomoFocusTime, setPomoFocusTime, shortBreakTime, setShortBreakTime, longBreakTime, setLongBreakTime } = useContext(DatasContextProvider);
+    const { setPomoFocusTime, setShortBreakTime, setLongBreakTime } = useContext(DatasContextProvider);
     const [tempDatas, setTempDatas] = useState([]);
 
     useEffect(() => {
         const fetchTaskDatas = async () => {
-            const datas = await axios.get('http://localhost:5000/user/task/get')
+            await axios.get('http://localhost:5000/user/task/get')
                 .then((res) => {
                     let temp = [];
                     temp.push(res.data.tasks)
@@ -83,43 +83,37 @@ export default function PomofucPage() {
 
 
     const PauseTimerHandler = () => {
-        setTimerState("Continue");
+        setTimerState("Start");
+        clearInterval(timerId);
+    }
+
+    const PomodoroActiveHandler = (value) => {
+        ActiveHandler(value);
+        setTimerState("Start");
+        clearInterval(timerId);
+    }
+
+    const ShortBreakActiveHandler = (value) => {
+        ActiveHandler(value)
+        setTimerState("Start");
+        clearInterval(timerId);
+    }
+
+    const LongBreakActiveHandler = (value) => {
+        ActiveHandler(value)
+        setTimerState("Start");
         clearInterval(timerId);
     }
 
     const RestartTimerHandler = () => {
         setTimerState("Start");
         clearInterval(timerId);
-        switch (active) {
-            case 1:
-                setPomoFocusTime(pomoFocusTime);
-                break;
-            case 2:
-                setShortBreakTime(shortBreakTime);
-                break;
-            case 3:
-                setLongBreakTime(longBreakTime);
-                break;
-            default:
-                break;
+        if (active === 1) {
+            ActiveHandler(2);
+        } else if (active === 2) {
+            ActiveHandler(1);
         }
     };
-
-
-    const PomodoroActiveHandler = (value) => {
-        ActiveHandler(value)
-        RestartTimerHandler();
-    }
-
-    const ShortBreakActiveHandler = (value) => {
-        ActiveHandler(value)
-        RestartTimerHandler();
-    }
-
-    const LongBreakActiveHandler = (value) => {
-        ActiveHandler(value)
-        RestartTimerHandler();
-    }
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
@@ -165,26 +159,26 @@ export default function PomofucPage() {
                     <div className="text-center justify-center">
                         <Layout />
                         <div className="flex items-center my-12 justify-center space-x-5 mx-auto">
-                            {timerState === 'Pause' ? (
-                                <button
-                                    onClick={PauseTimerHandler}
-                                    className='uppercase font-bold bg-gray-50 py-3 rounded-md text-[#BA4949] text-3xl px-16'
-                                >
-                                    {timerState}
-                                </button>
-                            ) : (
+                            {timerState === "Start" ? (
                                 <button
                                     onClick={TimeStartHandler}
                                     className='uppercase font-bold bg-gray-50 py-3 rounded-md text-[#BA4949] text-3xl px-16'
                                 >
                                     {timerState}
                                 </button>
+                            ) : (
+                                <button
+                                    onClick={PauseTimerHandler}
+                                    className='uppercase font-bold bg-gray-50 py-3 rounded-md text-[#BA4949] text-3xl px-16'
+                                >
+                                    {timerState}
+                                </button>
                             )}
-                            {(timerState === 'Pause' || timerState === 'Continue') &&
-                                <svg onClick={RestartTimerHandler} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            {timerState === "Pause" && (
+                                <svg onClick={RestartTimerHandler} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061A1.125 1.125 0 0 1 3 16.811V8.69ZM12.75 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061a1.125 1.125 0 0 1-1.683-.977V8.69Z" />
                                 </svg>
-                            }
+                            )}
                         </div>
                     </div>
                 </div>

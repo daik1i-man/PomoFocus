@@ -1,9 +1,13 @@
 import { Button, Input } from "@headlessui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import RegisterSucessfullyModal from "../../components/RegisterSuccessfullyModal/RegisterSuccessfullyModal";
+import { ActionsContextProvider } from "../../context/ActionsContext/ActionsContextProvider";
 
 export default function RegisterPage() {
+  const { setOpenSuccesRegisterModal } = useContext(ActionsContextProvider)
+  const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState({
     email: false,
     password: false,
@@ -40,6 +44,7 @@ export default function RegisterPage() {
 
   async function onSubmit(e) {
     e.preventDefault();
+    setLoading(true);
     if (!(formError.email && formError.password && formError.username)) {
       let values = {};
       for (const ev of e.target) {
@@ -51,14 +56,23 @@ export default function RegisterPage() {
         }
       }
 
-      await axios.post("http://localhost:5000/register/", {
-        ...JSON.stringify(values),
-      });
+      await axios.post("http://localhost:5000/auth/register", {
+        "username": values.username,
+        "email": values.email,
+        "password": values.password
+      }).then((responsive) => {
+        setOpenSuccesRegisterModal(true);
+        console.log(responsive.data.message);
+      }).catch((error) => {
+        console.log(error);
+      })
     }
+    setLoading(false);
   }
 
   return (
     <div className="SignupPage flex items-center justify-center h-screen w-full">
+      <RegisterSucessfullyModal />
       <div className="wrapped w-[345px]">
         <Link to="/">
           <img
@@ -97,7 +111,7 @@ export default function RegisterPage() {
                 id="username"
                 type="text"
                 required
-                placeholder="@iamaspiderman"
+                placeholder="I am a spiderman"
                 className={`px-3 py-2 outline-none rounded-lg bg-[#efefef] text-black w-full`}
                 onChange={onChange}
               />
@@ -134,6 +148,7 @@ export default function RegisterPage() {
               <Input
                 id="password"
                 type="password"
+                placeholder="*****"
                 required
                 className={`px-3 py-2 outline-none rounded-lg bg-[#efefef] text-black w-full`}
                 onChange={onChange}
@@ -146,7 +161,7 @@ export default function RegisterPage() {
               type="submit"
               className={`flex items-center justify-center text-center rounded-md cursor-pointer shadow-sm opacity-90 text-sm p-3 min-w-[70px] bg-gray-900 border-2 border-gray-900 w-full mt-7`}
             >
-              Sign up with Email
+              {loading ? 'Sending datas...' : 'Sign up with Email'}
             </Button>
           </form>
         </div>

@@ -1,12 +1,15 @@
 import { Button, Input } from "@headlessui/react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios'
 
 export default function LoginPage() {
   const [formError, setFormError] = useState({
     email: false,
     password: false,
   });
+
+  let navigate = useNavigate();
 
   function onChange(e) {
     e.preventDefault();
@@ -38,7 +41,14 @@ export default function LoginPage() {
         password: event.target[1].value,
       };
 
-      console.log(values);
+      await axios.post('http://localhost:5000/auth/login', {
+        "email": values.email,
+        "password": values.password
+      }).then((responsive) => {
+        console.log(responsive.data.message);
+        navigate('/');
+      }).catch((error) => console.log(error))
+
     }
   }
   return (
@@ -101,6 +111,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
+                placeholder="******"
                 required
                 onChange={onChange}
                 className={`px-3 py-2 outline-none rounded-lg bg-[#efefef] text-black w-full`}

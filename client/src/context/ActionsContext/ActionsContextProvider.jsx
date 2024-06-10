@@ -8,6 +8,7 @@ export default function ActionsContexComponent({ children }) {
     const [active, setActive] = useState(1);
     const [openUpdateTaskModal, setOpenUpdateTaskModal] = useState(false);
     const [openDeleteTaskModal, setOpenDeleteTaskModal] = useState(false);
+    const [openSuccesRegisterModal, setOpenSuccesRegisterModal] = useState(false);
 
     const ActiveHandler = (value) => {
         setActive(value === active ? 0 : value);
@@ -20,7 +21,8 @@ export default function ActionsContexComponent({ children }) {
                 active, setActive, ActiveHandler,
                 openAddTaskModal, setOpenAddTaskModal,
                 openUpdateTaskModal, setOpenUpdateTaskModal,
-                openDeleteTaskModal, setOpenDeleteTaskModal
+                openDeleteTaskModal, setOpenDeleteTaskModal,
+                openSuccesRegisterModal, setOpenSuccesRegisterModal
             }
         }>
             {children}

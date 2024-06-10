@@ -2,7 +2,6 @@ import { useContext, useState, useEffect } from 'react';
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
 import { ActionsContextProvider } from '../../context/ActionsContext/ActionsContextProvider';
 import { DatasContextProvider } from '../../context/DatasContext/DatasContextProvider';
-import axios from 'axios';
 
 export default function SettingsModal() {
     const { openModal, setOpenModal } = useContext(ActionsContextProvider);
