@@ -2,37 +2,43 @@ import { useContext, useState, useEffect } from 'react';
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
 import { ActionsContextProvider } from '../../context/ActionsContext/ActionsContextProvider';
 import { DatasContextProvider } from '../../context/DatasContext/DatasContextProvider';
+import axios from 'axios';
 
 export default function SettingsModal() {
     const { openModal, setOpenModal } = useContext(ActionsContextProvider);
-    const { ActiveHandler, active, datas, setDatas } = useContext(DatasContextProvider);
-
+    const { ActiveHandler, active, datas, setDatas, pomoFocusTime, shortBreakTime, longBreakTime } = useContext(DatasContextProvider);
     const [initialPomoFocusTime, setInitialPomoFocusTime] = useState(0);
     const [initialShortBreakTime, setInitialShortBreakTime] = useState(0);
     const [initialLongBreakTime, setInitialLongBreakTime] = useState(0);
+    const [buttonState, setButtonState] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (datas.pomofus !== undefined) {
-            setInitialPomoFocusTime(Math.floor(datas.pomofocus / 60));
-            setInitialShortBreakTime(Math.floor(datas.short_break / 60));
-            setInitialLongBreakTime(Math.floor(datas.long_break / 60));
+        if (pomoFocusTime !== undefined) {
+            setInitialPomoFocusTime(Math.floor(pomoFocusTime / 60));
+            setInitialShortBreakTime(Math.floor(shortBreakTime / 60));
+            setInitialLongBreakTime(Math.floor(longBreakTime / 60));
         }
     }, [datas])
 
     const handlePomoFocusTimeChange = (e) => {
         setInitialPomoFocusTime(e.target.value);
+        setButtonState(true);
     };
 
     const handleShortBreakTimeChange = (e) => {
         setInitialShortBreakTime(e.target.value);
+        setButtonState(true);
     };
 
     const handleLongBreakTimeChange = (e) => {
         setInitialLongBreakTime(e.target.value);
+        setButtonState(true);
     };
 
-    const UpdateTaskHandler = (e) => {
+    const UpdateTaskHandler = async (e) => {
         e.preventDefault();
+        setLoading(true);
         const newDatas = {
             pomofocus: initialPomoFocusTime * 60,
             short_break: initialShortBreakTime * 60,
@@ -40,6 +46,7 @@ export default function SettingsModal() {
         }
 
         setDatas({ ...datas, ...newDatas });
+        setLoading(false);
         setOpenModal(false);
     }
 
@@ -167,13 +174,23 @@ export default function SettingsModal() {
                                             >
                                                 Cancel
                                             </button>
-                                            <button
-                                                type="button"
-                                                className="inline-flex w-full justify-center rounded-md bg-gray-900 px-8 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:w-auto"
-                                                onClick={UpdateTaskHandler}
-                                            >
-                                                Save
-                                            </button>
+                                            {buttonState ? (
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex w-full justify-center rounded-md bg-gray-900 px-8 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:w-auto"
+                                                    onClick={UpdateTaskHandler}
+                                                >
+                                                    {loading ? 'Saving...' : 'Save'}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    disabled
+                                                    type="button"
+                                                    className="inline-flex w-full justify-center disabled:opacity-50 rounded-md bg-gray-900 px-8 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 sm:w-auto"
+                                                >
+                                                    Save
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

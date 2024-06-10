@@ -15,7 +15,7 @@ require("./auth")
 
 app.use(bodyParser.json())
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://localhost:5000"],
     credentials: true,
     optionSuccessStatus: 200
 }))

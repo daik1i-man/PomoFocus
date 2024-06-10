@@ -1,27 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { DatasContextProvider } from '../context/DatasContext/DatasContextProvider';
 import { ActionsContextProvider } from '../context/ActionsContext/ActionsContextProvider';
-import axios from 'axios';
 
 export default function Layout() {
     const { active } = useContext(ActionsContextProvider);
-    const { datas } = useContext(DatasContextProvider);
+    const { pomoFocusTime, shortBreakTime, longBreakTime } = useContext(DatasContextProvider);
 
-    let minute = Math.floor(datas.pomofocus / 60);
-    let second = Math.floor(datas.pomofocus % 60);
+    let minute = Math.floor(pomoFocusTime / 60);
+    let second = Math.floor(pomoFocusTime % 60);
 
     switch (active) {
         case 1:
-            minute = Math.floor(datas.pomofocus / 60);
-            second = Math.floor(datas.pomofocus % 60);
+            minute = Math.floor(pomoFocusTime / 60);
+            second = Math.floor(pomoFocusTime % 60);
             break;
         case 2:
-            minute = Math.floor(datas.short_break / 60);
-            second = Math.floor(datas.short_break % 60);
+            minute = Math.floor(shortBreakTime / 60);
+            second = Math.floor(shortBreakTime % 60);
             break;
         case 3:
-            minute = Math.floor(datas.long_break / 60);
-            second = Math.floor(datas.long_break % 60);
+            minute = Math.floor(longBreakTime / 60);
+            second = Math.floor(longBreakTime % 60);
             break;
     }
 

@@ -10,16 +10,7 @@ import TaskComponent from '../../components/TaskComponent/TaskComponent';
 import axios from 'axios';
 
 export default function PomofucPage() {
-    const {
-        pomoFocusTime,
-        setPomoFocusTime,
-        shortBreakTime,
-        setShortBreakTime,
-        longBreakTime,
-        setLongBreakTime,
-        fakeDatas
-    } = useContext(DatasContextProvider);
-
+    const { pomoFocusTime, setPomoFocusTime, shortBreakTime, setShortBreakTime, longBreakTime, setLongBreakTime } = useContext(DatasContextProvider);
     const [tempDatas, setTempDatas] = useState([]);
 
     useEffect(() => {
@@ -54,6 +45,7 @@ export default function PomofucPage() {
                             clearInterval(timer);
                             return 0;
                         } else {
+                            console.log(pomoFocusTime);
                             return pomoFocusTime - 1;
                         }
                     });
