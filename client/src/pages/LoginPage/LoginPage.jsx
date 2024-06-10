@@ -44,11 +44,13 @@ export default function LoginPage() {
   return (
     <div className="LoginPage flex items-center justify-center h-screen w-full">
       <div className="wrapped w-[345px]">
-        <img
-          src="https://pomofocus.io/images/brandlogo-white.png"
-          alt="Pomofocus logo"
-          className="max-w-[280px] mx-auto"
-        />
+        <Link to='/'>
+          <img
+            src="https://pomofocus.io/images/brandlogo-white.png"
+            alt="Pomofocus logo"
+            className="max-w-[280px] mx-auto"
+          />
+        </Link>
         <h6 className="mt-5 mb-7 text-center font-semibold">Login</h6>
         <div className=" rounded-xl flex flex-col px-4 py-6 bg-white w-full">
           <Button
